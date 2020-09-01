@@ -25,6 +25,22 @@ public class @Inputs_Master : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""Run"",
+                    ""type"": ""Button"",
+                    ""id"": ""2c6d01c7-222a-474e-bba7-daee61cc1704"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": ""Hold""
+                },
+                {
+                    ""name"": ""Dash"",
+                    ""type"": ""Button"",
+                    ""id"": ""53afcce6-10f9-4d52-ac4d-2bcd18e7b9ce"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": ""Hold""
                 }
             ],
             ""bindings"": [
@@ -137,6 +153,28 @@ public class @Inputs_Master : IInputActionCollection, IDisposable
                     ""action"": ""Move"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""508e66ee-1256-4557-866a-2f01af918d98"",
+                    ""path"": ""<Keyboard>/leftShift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Run"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""07ebea9c-75f6-480a-90ff-4ab0215f8fde"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": ""Hold"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Dash"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -146,6 +184,8 @@ public class @Inputs_Master : IInputActionCollection, IDisposable
         // Crew
         m_Crew = asset.FindActionMap("Crew", throwIfNotFound: true);
         m_Crew_Move = m_Crew.FindAction("Move", throwIfNotFound: true);
+        m_Crew_Run = m_Crew.FindAction("Run", throwIfNotFound: true);
+        m_Crew_Dash = m_Crew.FindAction("Dash", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -196,11 +236,15 @@ public class @Inputs_Master : IInputActionCollection, IDisposable
     private readonly InputActionMap m_Crew;
     private ICrewActions m_CrewActionsCallbackInterface;
     private readonly InputAction m_Crew_Move;
+    private readonly InputAction m_Crew_Run;
+    private readonly InputAction m_Crew_Dash;
     public struct CrewActions
     {
         private @Inputs_Master m_Wrapper;
         public CrewActions(@Inputs_Master wrapper) { m_Wrapper = wrapper; }
         public InputAction @Move => m_Wrapper.m_Crew_Move;
+        public InputAction @Run => m_Wrapper.m_Crew_Run;
+        public InputAction @Dash => m_Wrapper.m_Crew_Dash;
         public InputActionMap Get() { return m_Wrapper.m_Crew; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -213,6 +257,12 @@ public class @Inputs_Master : IInputActionCollection, IDisposable
                 @Move.started -= m_Wrapper.m_CrewActionsCallbackInterface.OnMove;
                 @Move.performed -= m_Wrapper.m_CrewActionsCallbackInterface.OnMove;
                 @Move.canceled -= m_Wrapper.m_CrewActionsCallbackInterface.OnMove;
+                @Run.started -= m_Wrapper.m_CrewActionsCallbackInterface.OnRun;
+                @Run.performed -= m_Wrapper.m_CrewActionsCallbackInterface.OnRun;
+                @Run.canceled -= m_Wrapper.m_CrewActionsCallbackInterface.OnRun;
+                @Dash.started -= m_Wrapper.m_CrewActionsCallbackInterface.OnDash;
+                @Dash.performed -= m_Wrapper.m_CrewActionsCallbackInterface.OnDash;
+                @Dash.canceled -= m_Wrapper.m_CrewActionsCallbackInterface.OnDash;
             }
             m_Wrapper.m_CrewActionsCallbackInterface = instance;
             if (instance != null)
@@ -220,6 +270,12 @@ public class @Inputs_Master : IInputActionCollection, IDisposable
                 @Move.started += instance.OnMove;
                 @Move.performed += instance.OnMove;
                 @Move.canceled += instance.OnMove;
+                @Run.started += instance.OnRun;
+                @Run.performed += instance.OnRun;
+                @Run.canceled += instance.OnRun;
+                @Dash.started += instance.OnDash;
+                @Dash.performed += instance.OnDash;
+                @Dash.canceled += instance.OnDash;
             }
         }
     }
@@ -227,5 +283,7 @@ public class @Inputs_Master : IInputActionCollection, IDisposable
     public interface ICrewActions
     {
         void OnMove(InputAction.CallbackContext context);
+        void OnRun(InputAction.CallbackContext context);
+        void OnDash(InputAction.CallbackContext context);
     }
 }
